@@ -7,10 +7,13 @@ import Explore from "./Components/Explore/Explore";
 import MoviePage from "./Components/MoviePage/MoviePage";
 
 function App() {
+  console.log(window.location);
+
   return (
     <div className="App">
       <Router>
-        <Navbar />
+        {window.location.pathname !== "/explore" && <Navbar />}
+
         <Routes>
           <Route path="/movie/:movieId" element={<MoviePage />} />
           <Route path="/explore" element={<Explore />} />

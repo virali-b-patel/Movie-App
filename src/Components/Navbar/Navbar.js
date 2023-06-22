@@ -3,7 +3,7 @@ import { Search } from "react-feather";
 import { Link } from "react-router-dom";
 import styles from "./Navbar.module.css";
 
-function Navbar() {
+function Navbar({ onSearch = () => {} }) {
   return (
     <div className={styles.container}>
       <Link to="/" className={styles.logo}>
@@ -12,7 +12,7 @@ function Navbar() {
 
       <div className={styles.right}>
         <div className={styles.search}>
-          <input type="text" placeholder="Search movie" />
+          <input type="text" placeholder="Search Movie" value={} onChange={onSearch} />
           <Search />
         </div>
 

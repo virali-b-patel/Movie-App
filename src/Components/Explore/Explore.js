@@ -3,6 +3,7 @@ import styles from "./Explore.module.css";
 import { getGenre, getMoviesWithGenreId } from "../../api/movies";
 import Paginate from "../Paginate/Paginate";
 import MovieCard from "../MovieCard/MovieCard";
+import Navbar from "../Navbar/Navbar";
 
 function Explore() {
   const [allGenres, setAllGenres] = useState([]);
@@ -24,7 +25,7 @@ function Explore() {
   const fetchMovies = (page) => {
     if (selectedGenres.length === 0) return;
     const ids = selectedGenres.map((item) => item.id).join(",");
-    console.log(ids, selectedGenres);
+    // console.log(ids, selectedGenres);
 
     setIsMoreMoviesLoading(true);
     getMoviesWithGenreId(ids, page).then((res) => {
@@ -57,6 +58,11 @@ function Explore() {
     fetchMovies(currentPage + 1);
   };
 
+  const onSearch = (e) => {
+    e.preventDefault();
+    console.log(e.target);
+  };
+
   useEffect(() => {
     if (isNearEnd) handlePaginate();
   }, [isNearEnd]);
@@ -71,35 +77,38 @@ function Explore() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        {allGenres.map((item) => {
-          return (
-            <div
-              key={item.id}
-              className={`${styles.chip} ${
-                selectedGenres.find((elem) => elem.id === item.id)
-                  ? styles.activeChip
-                  : ""
-              }`}
-              onClick={() => handleGenreClick(item)}
-            >
-              {item.name}
-            </div>
-          );
-        })}
-      </div>
-
-      <p className={styles.title}>Explore Movies</p>
-      <Paginate onIntersection={(isNearEnd) => setIsNearEnd(isNearEnd)}>
-        <div className={styles.body}>
-          {movies.map((item, index) => (
-            <MovieCard movie={item} key={item.id + index + ""} />
-          ))}
-          {isMoreMoviesLoading && <b>Loading...</b>}
+    <>
+      <Navbar onSearch={onSearch} />
+      <div className={styles.container}>
+        <div className={styles.header}>
+          {allGenres.map((item) => {
+            return (
+              <div
+                key={item.id}
+                className={`${styles.chip} ${
+                  selectedGenres.find((elem) => elem.id === item.id)
+                    ? styles.activeChip
+                    : ""
+                }`}
+                onClick={() => handleGenreClick(item)}
+              >
+                {item.name}
+              </div>
+            );
+          })}
         </div>
-      </Paginate>
-    </div>
+
+        <p className={styles.title}>Explore Movies</p>
+        <Paginate onIntersection={(isNearEnd) => setIsNearEnd(isNearEnd)}>
+          <div className={styles.body}>
+            {movies.map((item, index) => (
+              <MovieCard movie={item} key={item.id + index + ""} />
+            ))}
+            {isMoreMoviesLoading && <b>Loading...</b>}
+          </div>
+        </Paginate>
+      </div>
+    </>
   );
 }
 
