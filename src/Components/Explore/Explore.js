@@ -5,7 +5,7 @@ import Paginate from "../Paginate/Paginate";
 import MovieCard from "../MovieCard/MovieCard";
 import Navbar from "../Navbar/Navbar";
 
-function Explore() {
+function Explore({searchTerm}) {
   const [allGenres, setAllGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [movies, setMovies] = useState([]);
@@ -18,14 +18,13 @@ function Explore() {
     getGenre().then((res) => {
       if (!res) return;
       setAllGenres(res.genres);
-      setSelectedGenres([res.genres[0]]);
+      setSelectedGenres(res.genres[0]);
     });
   };
 
   const fetchMovies = (page) => {
     if (selectedGenres.length === 0) return;
-    const ids = selectedGenres.map((item) => item.id).join(",");
-    // console.log(ids, selectedGenres);
+    const ids = selectedGenres.id
 
     setIsMoreMoviesLoading(true);
     getMoviesWithGenreId(ids, page).then((res) => {
@@ -41,16 +40,13 @@ function Explore() {
     });
   };
 
-  const handleGenreClick = (genre) => {
-    const tempGenres = [...selectedGenres];
-    const currIndex = tempGenres.findIndex((item) => item.id === genre.id);
+  const searchResults = () => {
+     const newMovies = movies.filter(data => data.title.toLowerCase().includes(searchTerm.toLowerCase()))
+     setMovies(newMovies)
+  }
 
-    if (currIndex < 0) {
-      tempGenres.push(genre);
-    } else {
-      if (selectedGenres.length > 1) tempGenres.splice(currIndex, 1);
-    }
-    setSelectedGenres(tempGenres);
+  const handleGenreClick = (genre) => {
+    setSelectedGenres(genre);
   };
 
   const handlePaginate = () => {
@@ -58,27 +54,30 @@ function Explore() {
     fetchMovies(currentPage + 1);
   };
 
-  const onSearch = (e) => {
-    e.preventDefault();
-    console.log(e.target);
-  };
-
   useEffect(() => {
-    if (isNearEnd) handlePaginate();
-  }, [isNearEnd]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-    fetchMovies(1);
-  }, [selectedGenres]);
-
-  useEffect(() => {
-    fetchAllGenres();
+    if (searchTerm.length > 0) return;
+    fetchAllGenres()
   }, []);
+
+  useEffect(() => {
+    if(searchTerm.length > 0) return;
+    if(selectedGenres.length === 0) return;
+    if(isNearEnd) handlePaginate();
+  }, [isNearEnd, selectedGenres.length > 0]);
+
+  useEffect(() => {
+    if(searchTerm.length > 0) return
+    if(selectedGenres.length === 0) return;
+    setCurrentPage(1)
+    fetchMovies(1)
+  }, [selectedGenres,searchTerm]);
+
+  useEffect(() => {
+    searchTerm.length > 2 && searchResults()
+  },[searchTerm])
 
   return (
     <>
-      <Navbar onSearch={onSearch} />
       <div className={styles.container}>
         <div className={styles.header}>
           {allGenres.map((item) => {
@@ -86,7 +85,7 @@ function Explore() {
               <div
                 key={item.id}
                 className={`${styles.chip} ${
-                  selectedGenres.find((elem) => elem.id === item.id)
+                  selectedGenres.id === item.id ? styles.activeChip : ""
                     ? styles.activeChip
                     : ""
                 }`}

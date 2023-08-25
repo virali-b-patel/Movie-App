@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-
 import { getPopularMovies } from "../../api/movies";
-
 import Paginate from "../Paginate/Paginate";
 import MovieCard from "../MovieCard/MovieCard";
-
 import styles from "./Home.module.css";
 
-function Home() {
+function Home({searchTerm}) {
   const [popularMovies, setPopularMovies] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -31,18 +28,30 @@ function Home() {
     });
   };
 
+  const searchResults = () => {
+    const newMovies = popularMovies.filter(data => data.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    setPopularMovies(newMovies)
+  }
+
   const handlePaginate = () => {
     if (isMoreMoviesLoading || currentPage >= totalPages) return;
     fetchPopularMovies(currentPage + 1);
   };
 
   useEffect(() => {
+    if (searchTerm.length > 0) return;
     if (isNearEnd) handlePaginate();
   }, [isNearEnd]);
 
   useEffect(() => {
-    fetchPopularMovies(1);
-  }, []);
+    searchTerm.length > 2 && searchResults()
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (searchTerm.length > 0) return;
+    fetchPopularMovies(1)
+  }, [searchTerm])
+
   return (
     <div className={styles.container}>
       {!isDataLoaded ? (

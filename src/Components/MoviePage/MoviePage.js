@@ -36,7 +36,6 @@ function MoviePage() {
     <div className={styles.container}>
       <div className={styles.main}>
         <img src={`${imagePrefixUrl}${movie?.backdrop_path}`} />
-        console.log(movie.backdrop_path);
         <div className={styles.details}>
           <label>Title</label>
           <div className={styles.title}>{movie?.title}</div>

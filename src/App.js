@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Navbar from "./Components/Navbar/Navbar";
@@ -7,17 +7,19 @@ import Explore from "./Components/Explore/Explore";
 import MoviePage from "./Components/MoviePage/MoviePage";
 
 function App() {
-  console.log(window.location);
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const onSearch = (e) => setSearchTerm(e.currentTarget.value)
 
   return (
     <div className="App">
       <Router>
-        {window.location.pathname !== "/explore" && <Navbar />}
-
+        <Navbar onSearch={onSearch} searchTerm={searchTerm}/>
         <Routes>
           <Route path="/movie/:movieId" element={<MoviePage />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore searchTerm={searchTerm}/>} />
+          <Route path="/" element={<Home searchTerm={searchTerm}/>} />
         </Routes>
       </Router>
     </div>

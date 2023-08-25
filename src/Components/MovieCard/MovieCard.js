@@ -6,6 +6,7 @@ const imagePrefixUrl = "http://image.tmdb.org/t/p/w500";
 
 function MovieCard(props) {
   const movie = props?.movie;
+  
   return (
     <Link
       to={`/movie/${movie.id}`}
