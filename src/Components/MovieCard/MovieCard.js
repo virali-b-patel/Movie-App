@@ -10,7 +10,6 @@ function MovieCard(props) {
   return (
     <Link
       to={`/movie/${movie.id}`}
-      target="_blank"
       className={styles.container}
       title={movie?.title}
     >
